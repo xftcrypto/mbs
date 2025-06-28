@@ -73,3 +73,60 @@ The contract holds USDX as collateral to back the claims, but the actual investm
 ```
 
 This creates a synthetic MBS where USDX flows represent mortgage cash flows and losses.
+
+
+
+
+
+
+**Your Script is Good!** It deploys + immediately tests with a 50 USDX deposit.
+
+**MBS Example Walkthrough:**
+
+**Setup:**
+- Underlying: $10M mortgage pool (500 homes)
+- Senior Tranche: 70% ($7M capacity)
+- Interest: 5% annually
+- Maturity: 1 year
+
+**Month 1-6: Normal Operations**
+```
+1. Alice deposits 1000 USDX → gets 1000 STT tokens
+2. Bob deposits 2000 USDX → gets 2000 STT tokens  
+3. Total pool: 3000 USDX backing $3M mortgage claims
+
+Monthly: Homeowners pay mortgages → generates cash
+→ Admin pays interest: Alice gets ~4.17 USDX/month (1000 * 5% / 12)
+```
+
+**Month 7: Foreclosure Crisis**
+```
+Housing market crashes → 20% of mortgages default
+→ Admin calls: allocateLosses(600) // $600K loss on $3M slice
+
+Senior tranche protected → Junior absorbs losses first
+Alice's 1000 STT still worth 1000 USDX (senior safe)
+```
+
+**Month 12: Maturity**
+```
+Alice calls redeem()
+→ Burns 1000 STT tokens
+→ Gets back 1000 USDX (no losses hit senior level)
+
+If losses were 80%+, Alice would get less back
+```
+
+**Your Script Tests:**
+- Deploys senior tranche (safest)
+- Deposits 50 USDX → gets 50 STT  
+- Ready to earn 5% interest in USDX
+- At maturity: redeem STT for USDX (minus any losses)
+
+**Real MBS Difference:** Your contract holds USDX reserves, real MBS holds actual mortgage cash flows. But the risk/return waterfall works identically!
+
+
+
+
+
+
